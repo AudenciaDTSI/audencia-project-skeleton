@@ -1,0 +1,7 @@
+# Configuration lue par super-linter (Gitleaks)
+[extend]
+useDefault = true
+
+[allowlist]
+description = "APP_SECRET de développement versionné volontairement (Symfony) ; bin/init-project le régénère"
+paths = ['''(^|/)\.env\.dev$''']

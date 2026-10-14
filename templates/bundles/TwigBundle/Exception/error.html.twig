@@ -1,0 +1,105 @@
+{#
+    Page d'erreur affichée en prod (APP_DEBUG=0) pour tous les codes HTTP.
+    En dev, prévisualiser via /_error/404, /_error/500, etc.
+    Pour une page dédiée à un code, créer error{code}.html.twig à côté.
+    Ne jamais afficher exception.message : il peut contenir des détails internes.
+#}
+{% set messages = {
+    400: ['Requête invalide', 'La requête envoyée n’a pas pu être comprise par le serveur.'],
+    401: ['Authentification requise', 'Vous devez être connecté pour accéder à cette page.'],
+    403: ['Accès refusé', 'Vous n’avez pas les droits nécessaires pour accéder à cette page.'],
+    404: ['Page introuvable', 'La page demandée n’existe pas ou a été déplacée.'],
+    405: ['Méthode non autorisée', 'Cette action n’est pas permise sur cette page.'],
+    419: ['Session expirée', 'Votre session a expiré. Rechargez la page et réessayez.'],
+    429: ['Trop de requêtes', 'Vous avez effectué trop de requêtes. Patientez quelques instants avant de réessayer.'],
+    503: ['Service indisponible', 'Le service est momentanément indisponible, probablement pour maintenance. Réessayez dans quelques minutes.'],
+} %}
+{% if messages[status_code] is defined %}
+    {% set title = messages[status_code][0] %}
+    {% set description = messages[status_code][1] %}
+{% elseif status_code >= 500 %}
+    {% set title = 'Erreur interne' %}
+    {% set description = 'Une erreur inattendue est survenue. Réessayez dans quelques instants.' %}
+{% else %}
+    {% set title = status_text %}
+    {% set description = 'La requête n’a pas pu aboutir.' %}
+{% endif %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>{{ status_code }} · {{ title }}</title>
+    <style>
+        :root {
+            --bg: #f6f4ef;
+            --ink: #182a4a;
+            --muted: #5d6779;
+            --line: #e2ddd2;
+            --accent: #c9822b;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1726;
+                --ink: #eef0f4;
+                --muted: #9aa5b8;
+                --line: #263450;
+                --accent: #f4b860;
+            }
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            display: grid; place-items: center;
+            background: var(--bg); color: var(--ink);
+            font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        main { width: 100%; max-width: 560px; padding: 48px 24px; }
+        .code {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: var(--accent);
+            font: 600 .8rem ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            letter-spacing: .12em; text-transform: uppercase;
+        }
+        .code::before { content: ""; width: 24px; height: 2px; background: currentColor; }
+        .status {
+            margin: 18px 0 0;
+            font-size: clamp(4.5rem, 18vw, 7.5rem); line-height: .9;
+            font-weight: 700; letter-spacing: -.04em;
+            color: transparent; -webkit-text-stroke: 2px var(--ink);
+        }
+        h1 { margin: 22px 0 10px; font-size: clamp(1.5rem, 5vw, 2rem); line-height: 1.15; letter-spacing: -.02em; }
+        p { margin: 0; color: var(--muted); font-size: 1.05rem; max-width: 46ch; }
+        .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+        .actions a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: 999px;
+            font-size: .95rem; font-weight: 600; text-decoration: none;
+            border: 1px solid var(--line); color: var(--ink);
+        }
+        .actions a.primary { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+        .actions a:hover { border-color: var(--accent); }
+        .actions a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+        footer {
+            margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line);
+            color: var(--muted); font-size: .82rem;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <span class="code">Erreur {{ status_code }}</span>
+    <div class="status" aria-hidden="true">{{ status_code }}</div>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+    <div class="actions">
+        <a class="primary" href="/">Retour à l’accueil</a>
+        <a href="javascript:history.back()">Page précédente</a>
+    </div>
+    <footer>Si le problème persiste, contactez le support en précisant le code {{ status_code }}.</footer>
+</main>
+</body>
+</html>
