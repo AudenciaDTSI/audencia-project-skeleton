@@ -1,0 +1,16 @@
+---
+# Production environment override
+services:
+  php:
+    image: ${IMAGES_PREFIX:-}audencia-project-skeleton-php-prod
+    build:
+      context: .
+      target: frankenphp_prod
+    environment:
+      APP_SECRET: ${APP_SECRET}
+    volumes:
+      # Default SQLite database (DATABASE_URL in .env)
+      - app_data:/app/var/data
+
+volumes:
+  app_data:

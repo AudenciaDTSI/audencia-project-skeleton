@@ -1,0 +1,41 @@
+#!/bin/sh
+# Transforme une copie du skeleton en nouveau projet.
+# Usage : bin/init-project <nom-du-projet>   (minuscules, chiffres et tirets, ex. gestion-salles)
+set -eu
+
+TEMPLATE=audencia-project-skeleton
+NAME="${1:-}"
+
+if ! printf '%s' "$NAME" | grep -Eq '^[a-z][a-z0-9-]{1,48}[a-z0-9]$'; then
+    echo "Nom invalide : '$NAME'"
+    echo "Utiliser uniquement des minuscules, chiffres et tirets (ex. gestion-salles)."
+    exit 1
+fi
+
+cd "$(dirname "$0")/.."
+
+if [ "$NAME" = "$TEMPLATE" ]; then
+    echo "Choisir un nom différent de '$TEMPLATE'."
+    exit 1
+fi
+
+# 1. Renommer le projet dans les fichiers qui portent son nom
+for file in compose.yaml compose.override.yaml compose.prod.yaml README.md \
+    templates/welcome/index.html.twig tests/Functional/WelcomeTest.php; do
+    [ -f "$file" ] && perl -pi -e "s/\Q$TEMPLATE\E/$NAME/g" "$file"
+done
+
+# 2. Secret applicatif de dev propre au projet (la prod utilise sa propre variable APP_SECRET)
+SECRET=$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
+perl -pi -e "s/^APP_SECRET=.*/APP_SECRET=$SECRET/" .env.dev
+
+# 3. Repartir d'un historique Git vierge (le projet ne doit pas pointer vers le dépôt du skeleton)
+if [ -d .git ] && git remote get-url origin 2>/dev/null | grep -q "$TEMPLATE"; then
+    rm -rf .git
+fi
+if [ ! -d .git ]; then
+    git init -q -b main
+fi
+
+echo "Projet '$NAME' initialisé."
+echo "Étape suivante : make build && make up, puis ouvrir https://localhost:8443"

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>audencia-project-skeleton · bienvenue</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23182a4a'/><path d='M9 23 16 8l7 15M11.8 17.5h8.4' stroke='%23f4b860' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+    <style>
+        :root {
+            --bg: #f6f4ef;
+            --surface: #fffdf9;
+            --ink: #182a4a;
+            --muted: #5d6779;
+            --line: #e2ddd2;
+            --accent: #c9822b;
+            --accent-soft: #f7e9d6;
+            --ok: #2f7d55;
+            --ko: #b4432f;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1726;
+                --surface: #162136;
+                --ink: #eef0f4;
+                --muted: #9aa5b8;
+                --line: #263450;
+                --accent: #f4b860;
+                --accent-soft: #22304b;
+                --ok: #5cc28d;
+                --ko: #ef7d68;
+            }
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        main { max-width: 920px; margin: 0 auto; padding: 56px 24px 40px; }
+        code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .86em; }
+
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--accent); font-size: .78rem; font-weight: 600;
+            letter-spacing: .12em; text-transform: uppercase;
+        }
+        .eyebrow::before { content: ""; width: 24px; height: 2px; background: currentColor; }
+        h1 {
+            margin: 14px 0 14px;
+            font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1;
+            letter-spacing: -.02em; font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+        .lead { margin: 0; max-width: 62ch; color: var(--muted); font-size: 1.1rem; }
+        .lead strong { color: var(--ink); }
+
+        h2 { margin: 0 0 6px; font-size: 1.3rem; letter-spacing: -.01em; }
+        .section-intro { margin: 0 0 20px; color: var(--muted); }
+        section { margin-top: 52px; }
+
+        /* État de l'application */
+        .status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 36px 0 0; padding: 0; list-style: none; }
+        .status li {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 16px 18px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: 12px;
+        }
+        .status strong { display: block; font-size: .98rem; }
+        .status span.help { display: block; color: var(--muted); font-size: .86rem; line-height: 1.45; margin-top: 2px; }
+        .check {
+            flex: none; width: 22px; height: 22px; border-radius: 50%; margin-top: 1px;
+            display: grid; place-items: center; color: #fff; font-size: .8rem; font-weight: 700;
+            background: var(--ok);
+        }
+        [data-ok="0"] .check { background: var(--ko); }
+
+        /* Comment ça marche */
+        .cycle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: cycle; }
+        .cycle li { counter-increment: cycle; padding: 0 18px 0 0; position: relative; }
+        .cycle li::before {
+            content: counter(cycle);
+            display: grid; place-items: center;
+            width: 34px; height: 34px; border-radius: 50%; margin-bottom: 10px;
+            background: var(--ink); color: var(--bg); font-weight: 700;
+        }
+        .cycle li:not(:last-child)::after {
+            content: ""; position: absolute; top: 17px; left: 44px; right: 10px;
+            border-top: 2px dotted var(--line);
+        }
+        .cycle strong { display: block; }
+        .cycle span { color: var(--muted); font-size: .92rem; }
+
+        /* Messages à copier */
+        .prompts { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+        .prompt { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+        .prompt header { display: flex; align-items: baseline; gap: 12px; padding: 16px 20px 0; }
+        .prompt .num { color: var(--accent); font: 700 .85rem ui-monospace, Menlo, monospace; }
+        .prompt h3 { margin: 0; font-size: 1.05rem; }
+        .prompt p.when { margin: 4px 20px 0 52px; color: var(--muted); font-size: .92rem; }
+        .prompt .box { position: relative; margin: 14px 20px 18px 52px; }
+        .prompt pre {
+            margin: 0; padding: 14px 16px; padding-right: 100px;
+            background: var(--accent-soft); border-radius: 10px;
+            font: .92rem/1.55 ui-sans-serif, system-ui, sans-serif;
+            white-space: pre-wrap; overflow-wrap: anywhere;
+        }
+        .copy {
+            position: absolute; top: 8px; right: 8px;
+            padding: 6px 12px; border-radius: 999px; cursor: pointer;
+            font: 600 .82rem ui-sans-serif, system-ui, sans-serif;
+            background: var(--ink); color: var(--bg); border: 0;
+        }
+        .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        /* Bon à savoir */
+        .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
+        .tips li { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; }
+        .tips strong { display: block; margin-bottom: 4px; }
+        .tips span { color: var(--muted); font-size: .92rem; }
+
+        /* Détails techniques */
+        details { margin-top: 52px; border-top: 1px solid var(--line); padding-top: 18px; }
+        summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+        summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .tech { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0 0; }
+        .tech dt { color: var(--muted); font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; }
+        .tech dd { margin: 2px 0 0; font-weight: 600; }
+        .tech small { display: block; color: var(--muted); font-weight: 400; }
+        .tech-cmds { margin: 18px 0 0; color: var(--muted); font-size: .9rem; }
+
+        @media (max-width: 760px) {
+            main { padding: 36px 16px 32px; }
+            .status, .tips { grid-template-columns: 1fr; }
+            .cycle { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+            .cycle li::after { display: none; }
+            .prompt p.when, .prompt .box { margin-left: 20px; }
+            .tech { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <span class="eyebrow">Audencia · nouveau projet</span>
+    <h1>audencia-project-skeleton</h1>
+    <p class="lead">
+        <strong>Bonne nouvelle : votre application fonctionne.</strong>
+        Cette page provisoire vous guide pour la construire avec votre agent IA.
+        Elle disparaîtra quand votre vraie page d’accueil sera créée.
+    </p>
+
+    <ul class="status">
+        <li data-check="app" data-ok="1">
+            <span class="check" aria-hidden="true">✓</span>
+            <div>
+                <strong>L’application est démarrée</strong>
+                <span class="help">Vous lisez cette page : tout est en marche.</span>
+            </div>
+        </li>
+        <li data-check="database" data-ok="{{ database.ok ? 1 : 0 }}">
+            <span class="check" aria-hidden="true">{{ database.ok ? '✓' : '!' }}</span>
+            <div>
+                <strong>{{ database.ok ? 'La base de données est prête' : 'La base de données ne répond pas' }}</strong>
+                <span class="help">{{ database.ok ? 'C’est là que seront enregistrées vos informations.' : 'Copiez ce message à votre agent : « La base de données ne répond pas sur la page d’accueil ».' }}</span>
+            </div>
+        </li>
+        <li data-check="local" data-ok="1">
+            <span class="check" aria-hidden="true">✓</span>
+            <div>
+                <strong>Visible par vous seul·e</strong>
+                <span class="help">L’adresse <code>localhost</code> désigne votre ordinateur : personne d’autre n’y a accès.</span>
+            </div>
+        </li>
+    </ul>
+
+    <section aria-labelledby="cycle-title">
+        <h2 id="cycle-title">Comment ça marche</h2>
+        <p class="section-intro">Vous n’écrivez pas de code : vous expliquez, l’agent réalise, vous vérifiez.</p>
+        <ol class="cycle">
+            <li><strong>Vous décrivez</strong><span>votre besoin en français à l’agent, comme à un collègue.</span></li>
+            <li><strong>L’agent construit</strong><span>les pages et vérifie lui-même que tout fonctionne.</span></li>
+            <li><strong>Vous testez</strong><span>dans ce navigateur, à l’adresse qu’il vous indique.</span></li>
+            <li><strong>Vous sauvegardez</strong><span>quand le résultat vous convient, puis étape suivante.</span></li>
+        </ol>
+    </section>
+
+    <section aria-labelledby="prompts-title">
+        <h2 id="prompts-title">Vos prochaines étapes</h2>
+        <p class="section-intro">Copiez ces messages dans votre agent IA, un à la fois, en adaptant le texte entre crochets.</p>
+        <ol class="prompts">
+            <li class="prompt">
+                <header><span class="num">01</span><h3>Présenter votre projet</h3></header>
+                <p class="when">Avant tout : l’agent doit comprendre votre besoin. Il ne codera rien à cette étape.</p>
+                <div class="box">
+                    <pre>Je veux une application pour [à quoi elle sert, pour qui].
+Les informations à gérer sont : [par exemple : des salles avec un nom et une capacité, des réservations avec une date et un horaire].
+Règles importantes : [par exemple : deux réservations ne peuvent pas se chevaucher].
+Ne code rien pour l’instant : propose-moi un découpage en petites étapes.</pre>
+                    <button type="button" class="copy">Copier</button>
+                </div>
+            </li>
+            <li class="prompt">
+                <header><span class="num">02</span><h3>Construire la première étape</h3></header>
+                <p class="when">Une fois le plan validé. Une étape par message, c’est plus sûr.</p>
+                <div class="box">
+                    <pre>Réalise l’étape 1 du plan.
+Quand c’est fini, dis-moi quelle page ouvrir et quoi tester.</pre>
+                    <button type="button" class="copy">Copier</button>
+                </div>
+            </li>
+            <li class="prompt">
+                <header><span class="num">03</span><h3>Signaler un problème</h3></header>
+                <p class="when">Soyez précis : la page, ce que vous avez fait, ce que vous attendiez.</p>
+                <div class="box">
+                    <pre>Sur la page [adresse], quand je [action], je vois [ce qui se passe] au lieu de [ce que j’attendais].</pre>
+                    <button type="button" class="copy">Copier</button>
+                </div>
+            </li>
+            <li class="prompt">
+                <header><span class="num">04</span><h3>Sauvegarder</h3></header>
+                <p class="when">Après chaque étape qui fonctionne, pour pouvoir revenir en arrière.</p>
+                <div class="box">
+                    <pre>Tout fonctionne. Sauvegarde le projet (commit) avec un message qui résume ce qu’on vient de faire.</pre>
+                    <button type="button" class="copy">Copier</button>
+                </div>
+            </li>
+        </ol>
+    </section>
+
+    <section aria-labelledby="tips-title">
+        <h2 id="tips-title">Bon à savoir</h2>
+        <ul class="tips">
+            <li>
+                <strong>Un doute, une erreur ?</strong>
+                <span>Copiez le message d’erreur tel quel à l’agent, ou demandez-lui : « Réexplique sans jargon ».</span>
+            </li>
+            <li>
+                <strong>Avant de partager l’application</strong>
+                <span>Mise en ligne, connexion des utilisateurs, données personnelles : contactez d’abord la DSI.</span>
+            </li>
+            <li>
+                <strong>Le guide complet</strong>
+                <span>Dans le dossier du projet : <code>docs/guide-agent-ia.md</code>. Votre agent peut vous le résumer.</span>
+            </li>
+        </ul>
+    </section>
+
+    <details>
+        <summary>Détails techniques (pour la DSI)</summary>
+        <dl class="tech">
+            <div><dt>Symfony</dt><dd>{{ symfony_version }}<small>LTS · support jusqu’en {{ symfony_eol }}</small></dd></div>
+            <div><dt>PHP</dt><dd>{{ php_version }}<small>{{ app.environment }} · debug {{ app.debug ? 'on' : 'off' }}</small></dd></div>
+            <div data-check="worker" data-ok="{{ worker_mode ? 1 : 0 }}"><dt>FrankenPHP</dt><dd>{{ worker_mode ? 'Worker mode' : 'Mode classique' }}<small>{{ worker_mode ? 'app gardée en mémoire' : 'hors worker' }}</small></dd></div>
+            <div><dt>Base</dt><dd>{{ database.driver }}<small>{{ database.ok ? 'connectée' : 'injoignable' }}</small></dd></div>
+        </dl>
+        <p class="tech-cmds">
+            Commandes : <code>make up</code>, <code>make down</code>, <code>make qa</code>, <code>make sf c=about</code>.
+            Page servie en <code>dev</code>/<code>test</code> uniquement ; à supprimer avec la première vraie page :
+            <code>src/Controller/WelcomeController.php</code>, <code>templates/welcome/</code>, <code>tests/Functional/WelcomeTest.php</code>.
+        </p>
+    </details>
+</main>
+<script>
+    document.querySelectorAll('.copy').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const text = button.previousElementSibling.textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+                button.textContent = 'Copié ✓';
+            } catch {
+                const range = document.createRange();
+                range.selectNodeContents(button.previousElementSibling);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                button.textContent = 'Sélectionné : Cmd/Ctrl + C';
+            }
+            setTimeout(() => { button.textContent = 'Copier'; }, 2500);
+        });
+    });
+</script>
+</body>
+</html>
