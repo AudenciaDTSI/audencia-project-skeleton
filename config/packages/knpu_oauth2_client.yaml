@@ -1,0 +1,12 @@
+# Connexion SSO Microsoft (Entra ID). Identifiants dans .env.local, jamais dans un fichier versionné.
+knpu_oauth2_client:
+    clients:
+        azure:
+            type: azure
+            client_id: '%env(AZURE_CLIENT_ID)%'
+            client_secret: '%env(AZURE_CLIENT_SECRET)%'
+            tenant: '%env(AZURE_TENANT_ID)%'
+            redirect_route: connect_azure_check
+            redirect_params: {}
+            default_end_point_version: '2.0'
+            auth_with_resource: false

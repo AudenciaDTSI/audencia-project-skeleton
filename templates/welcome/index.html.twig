@@ -61,7 +61,7 @@
         section { margin-top: 52px; }
 
         /* État de l'application */
-        .status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 36px 0 0; padding: 0; list-style: none; }
+        .status { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 36px 0 0; padding: 0; list-style: none; }
         .status li {
             display: flex; gap: 12px; align-items: flex-start;
             padding: 16px 18px; background: var(--surface);
@@ -165,6 +165,13 @@
                 <span class="help">{{ database.ok ? 'C’est là que seront enregistrées vos informations.' : 'Copiez ce message à votre agent : « La base de données ne répond pas sur la page d’accueil ».' }}</span>
             </div>
         </li>
+        <li data-check="login" data-ok="1">
+            <span class="check" aria-hidden="true">✓</span>
+            <div>
+                <strong>Vos pages sont protégées</strong>
+                <span class="help">Ici, connectez-vous avec <code>{{ dev_username }}</code> / <code>{{ dev_password }}</code>. En ligne, ce sera avec votre compte Microsoft Audencia.</span>
+            </div>
+        </li>
         <li data-check="local" data-ok="1">
             <span class="check" aria-hidden="true">✓</span>
             <div>
@@ -237,7 +244,7 @@ Quand c’est fini, dis-moi quelle page ouvrir et quoi tester.</pre>
             </li>
             <li>
                 <strong>Avant de partager l’application</strong>
-                <span>Mise en ligne, connexion des utilisateurs, données personnelles : contactez d’abord la DSI.</span>
+                <span>Mise en ligne, page accessible sans connexion, données personnelles : contactez d’abord la DSI.</span>
             </li>
             <li>
                 <strong>Le guide complet</strong>

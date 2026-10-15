@@ -7,6 +7,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    # Faux en dev (voir en bas de fichier) : la déconnexion ne passe alors pas par Microsoft.
+    app.sso_enabled: true
 
 services:
     # default configuration for services in *this* file
@@ -21,3 +23,21 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Authentification : SSO Microsoft partout (prod, qualif, test…), sauf en dev.
+    app.authenticator: '@App\Security\AzureAuthenticator'
+
+# Dev : pas de SSO, identifiants simples audencia / audencia.
+when@dev:
+    parameters:
+        app.sso_enabled: false
+    services:
+        app.authenticator: '@App\Security\DevLoginAuthenticator'
+
+# Test : vrai parcours SSO, mais avec un faux Microsoft (aucun appel réseau).
+when@test:
+    services:
+        knpu.oauth2.client.azure:
+            class: App\Tests\Double\FakeMicrosoftClient
+            public: true # lu à la volée par KnpU\OAuth2ClientBundle\Client\ClientRegistry
+            autowire: true

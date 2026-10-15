@@ -9,7 +9,7 @@ Basé sur [dunglas/symfony-docker](https://github.com/dunglas/symfony-docker), a
 
 Conventions de code, base de données, tests et sécurité : [Bonnes pratiques des projets Audencia](docs/bonnes-pratiques.md).
 
-![Page d'accueil du skeleton : état de l'application, fonctionnement avec l'agent IA et messages à copier](docs/images/homepage.png)
+![Page d'accueil du skeleton : état de l'application (dont la connexion), fonctionnement avec l'agent IA et messages à copier](docs/images/homepage.png)
 
 ## Stack
 
@@ -44,9 +44,29 @@ Docker Compose ne lit pas `.env.local` de lui-même : le `Makefile` le lui passe
 
 ## Page d'accueil
 
-`https://localhost:8443/` affiche une page d'accueil provisoire destinée aux non-développeurs : état de l'application en langage simple, fonctionnement avec un agent IA, messages prêts à copier. Les versions techniques sont dans un bloc repliable « Détails techniques ».
+`https://localhost:8443/` affiche une page d'accueil provisoire destinée aux non-développeurs : état de l'application en langage simple (application, base de données, identifiants de connexion locaux), fonctionnement avec un agent IA, messages prêts à copier. Les versions techniques sont dans un bloc repliable « Détails techniques ».
 Elle n'existe qu'en `dev` et `test` (`#[When]` sur le service + `env` sur la route). À supprimer dès la première vraie route :
-`src/Controller/WelcomeController.php`, `templates/welcome/`, `tests/Functional/WelcomeTest.php`.
+`src/Controller/WelcomeController.php`, `templates/welcome/`, `tests/Functional/WelcomeTest.php`, ainsi que la règle `app_welcome` dans `config/packages/security.yaml` et dans `PUBLIC_ROUTES` de `tests/Functional/Security/AccessControlTest.php`.
+C'est la seule page publique : elle n'existe pas en prod.
+
+## Connexion SSO Microsoft
+
+Toutes les pages exigent une connexion, dans tous les environnements :
+
+| Environnement       | Connexion                                                                       |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `prod` (et qualif…) | SSO Microsoft (Entra ID) : la personne non connectée est envoyée chez Microsoft |
+| `dev`               | Formulaire `/connexion`, identifiants **`audencia` / `audencia`**               |
+| `test`              | Faux SSO Microsoft (`tests/Double/FakeMicrosoftClient.php`), sans réseau        |
+
+Bundle `knpuniversity/oauth2-client-bundle` + `thenetworg/oauth2-azure`, contrôle du tenant, déconnexion Microsoft incluse.
+
+- Identifiants Entra ID fournis par la DSI, à définir sur le serveur (jamais dans un fichier versionné) : `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID`.
+- URL de redirection à déclarer : `https://<domaine>/connect/azure/check`.
+- Page d'exemple protégée : `https://localhost:8443/mon-compte`.
+- Garde-fous : `AccessControlTest` échoue si une route est accessible sans connexion, `ProdLoginTest` si le formulaire de dev existe en prod (`tests/Functional/Security/`).
+
+Détails, configuration Entra ID et RGPD : [docs/sso-microsoft.md](docs/sso-microsoft.md).
 
 ## Pages d'erreur
 

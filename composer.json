@@ -12,14 +12,17 @@
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.7",
+        "knpuniversity/oauth2-client-bundle": "^2.20",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.4.*",
         "symfony/runtime": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/uid": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/yaml": "7.4.*",
+        "thenetworg/oauth2-azure": "^2.2"
     },
     "config": {
         "allow-plugins": {
@@ -78,7 +81,7 @@
         "kubawerlos/php-cs-fixer-custom-fixers": "^3.36",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.3",
-        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-doctrine": "^2.0.27",
         "phpstan/phpstan-phpunit": "^2.1",
         "phpstan/phpstan-symfony": "^2.1",
         "phpunit/phpunit": "^13",
