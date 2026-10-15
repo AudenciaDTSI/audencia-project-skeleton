@@ -1,0 +1,28 @@
+{% extends 'layout/auth.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block card %}
+    {% set user = app.user %}
+    <span class="eyebrow">Mon compte</span>
+    <div class="identity">
+        <span class="avatar" aria-hidden="true">{{ user.initials }}</span>
+        <div>
+            <h1 data-test="display-name">{{ user.displayName }}</h1>
+            <p>{{ user.email }}</p>
+        </div>
+    </div>
+
+    <dl class="details">
+        <div>
+            <dt>Dernière connexion</dt>
+            <dd>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y à H:i', 'Europe/Paris') : '—' }}</dd>
+        </div>
+    </dl>
+
+    {# POST + jeton CSRF : un simple lien serait déclenché par un préchargement du navigateur. #}
+    <form method="post" action="{{ path('_logout_main') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+        <button type="submit" class="btn btn-secondary">Se déconnecter</button>
+    </form>
+{% endblock %}

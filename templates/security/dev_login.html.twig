@@ -1,0 +1,32 @@
+{% extends 'layout/auth.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block card %}
+    <span class="eyebrow">Audencia · développement</span>
+    <h1>Connexion</h1>
+    <p class="lead">Connectez-vous pour accéder à l’application.</p>
+
+    <p class="notice">
+        Sur votre ordinateur, utilisez l’identifiant <code>{{ username }}</code> et le mot de passe <code>{{ password }}</code>.
+    </p>
+
+    {% if error %}
+        <p class="alert" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+    {% endif %}
+
+    <form method="post" action="{{ path('app_login') }}">
+        <label class="field">Identifiant
+            <input type="text" name="_username" value="{{ last_username }}" autocomplete="username" required autofocus>
+        </label>
+        <label class="field">Mot de passe
+            <input type="password" name="_password" autocomplete="current-password" required>
+        </label>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+    </form>
+{% endblock %}
+
+{% block footnote %}
+    <p class="footnote">En ligne, la connexion se fera avec votre compte Microsoft Audencia.</p>
+{% endblock %}

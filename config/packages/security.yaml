@@ -1,0 +1,44 @@
+security:
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            # Ensure dev tools and static assets are always allowed
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            # SSO Microsoft (Entra ID) partout, sauf en dev : formulaire audencia / audencia.
+            # En test : SSO avec un faux Microsoft (tests/Double/FakeMicrosoftClient.php).
+            # Choix fait par l'alias app.authenticator dans config/services.yaml.
+            custom_authenticator: app.authenticator
+            entry_point: app.authenticator
+            # Déconnexion en POST avec jeton CSRF, puis déconnexion Microsoft (App\Security\AzureLogoutListener).
+            logout:
+                path: /deconnexion
+                enable_csrf: true
+
+    # Règle d'or : toute page exige une connexion SSO, en prod comme ailleurs.
+    # Une exception se justifie et se teste (tests/Functional/Security/AccessControlTest.php).
+    # Note: Only the *first* matching rule is applied
+    access_control:
+        - { path: ^/connect/azure, roles: PUBLIC_ACCESS }
+        # Formulaire de connexion de dev (la route n'existe qu'en dev).
+        - { route: app_login, roles: PUBLIC_ACCESS }
+        # Page d'accueil du skeleton (dev/test uniquement) : supprimer cette ligne avec elle.
+        - { route: app_welcome, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
+
+# Dev : après déconnexion, retour au formulaire de connexion (pas de déconnexion Microsoft).
+when@dev:
+    security:
+        firewalls:
+            main:
+                logout:
+                    target: app_login

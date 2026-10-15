@@ -1,0 +1,14 @@
+{% extends 'layout/auth.html.twig' %}
+
+{% block title %}Connexion impossible{% endblock %}
+
+{% block card %}
+    <span class="status-icon" aria-hidden="true">!</span>
+    <h1>Connexion impossible</h1>
+    <p class="lead">{{ message }}</p>
+    <a class="btn btn-primary" href="{{ path('connect_azure_start') }}">Réessayer avec Microsoft</a>
+{% endblock %}
+
+{% block footnote %}
+    <p class="footnote">Si le problème persiste, contactez la DSI.</p>
+{% endblock %}

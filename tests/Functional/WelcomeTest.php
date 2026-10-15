@@ -18,5 +18,6 @@ final class WelcomeTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'audencia-project-skeleton');
         self::assertSelectorExists('[data-check="database"][data-ok="1"]');
+        self::assertSelectorExists('[data-check="login"][data-ok="1"]');
     }
 }

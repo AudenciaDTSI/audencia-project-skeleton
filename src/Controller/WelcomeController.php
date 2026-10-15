@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\DevLoginAuthenticator;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -29,6 +30,8 @@ final class WelcomeController extends AbstractController
             'php_version' => \PHP_VERSION,
             'worker_mode' => isset($_SERVER['FRANKENPHP_WORKER']),
             'database' => $this->databaseStatus($connection),
+            'dev_username' => DevLoginAuthenticator::USERNAME,
+            'dev_password' => DevLoginAuthenticator::PASSWORD,
         ]);
     }
 

@@ -20,13 +20,15 @@ Si le dossier s'appelle encore `audencia-project-skeleton` ou que la personne de
 1. Demander le nom du projet s'il n'est pas donné (minuscules, chiffres, tirets : `gestion-salles`).
 2. `bin/init-project <nom>` : renomme le projet, génère un secret, réinitialise Git.
 3. `make build` puis `make up` (le premier build prend plusieurs minutes : prévenir la personne).
-4. Vérifier `https://localhost:8443` (page d'accueil du skeleton, 4 indicateurs verts).
+4. Vérifier `https://localhost:8443` (page d'accueil du skeleton, indicateurs verts).
+   Les autres pages demandent une connexion : en local, identifiants `audencia` / `audencia`.
 5. Proposer le premier commit (`chore: initialisation depuis audencia-project-skeleton`) et attendre l'accord.
 
 ## Stack
 
 - Symfony 7.4 LTS, PHP 8.5, FrankenPHP (worker mode), le tout dans Docker. **Toutes les commandes PHP passent par le conteneur**, jamais par le PHP de la machine.
 - Base de données SQLite (`var/data/`), Doctrine ORM + migrations.
+- Connexion obligatoire sur **toutes** les pages : SSO Microsoft (Entra ID) en prod, formulaire `audencia` / `audencia` en dev, faux SSO en test. Voir [`docs/sso-microsoft.md`](docs/sso-microsoft.md).
 - Twig pour les pages. Aucun outillage front imposé : choisir selon le besoin (AssetMapper, Tailwind, Stimulus…).
 
 ## Commandes
@@ -51,7 +53,8 @@ Référence complète : [`docs/bonnes-pratiques.md`](docs/bonnes-pratiques.md). 
 - Textes affichés en français. Contrôleurs fins : la logique métier va dans `src/Service/`.
 - Entités : identifiant UUIDv7 (`Uuid::v7()`, voir bonnes pratiques), attributs PHP `#[ORM\...]`, puis `make sf c='doctrine:migrations:diff'` et `make sf c='doctrine:migrations:migrate'`.
 - Formulaires : classes `*Type` dans `src/Form/`, validation par contraintes `#[Assert\...]`.
-- À la création de la première vraie page d'accueil, supprimer la page du skeleton : `src/Controller/WelcomeController.php`, `templates/welcome/`, `tests/Functional/WelcomeTest.php`.
+- À la création de la première vraie page d'accueil, supprimer la page du skeleton : `src/Controller/WelcomeController.php`, `templates/welcome/`, `tests/Functional/WelcomeTest.php`, la règle `app_welcome` de `config/packages/security.yaml` et de `PUBLIC_ROUTES` dans `tests/Functional/Security/AccessControlTest.php`. Mettre aussi `AzureAuthenticator::DEFAULT_ROUTE` sur la nouvelle page.
+- Toute page exige une connexion SSO, prod comprise. Ne jamais ajouter de règle `PUBLIC_ACCESS` ni toucher à `AccessControlTest` sans accord de la DSI. Pour tester une page : `$client->loginUser($user)`. Ne jamais rendre le formulaire `audencia` / `audencia` disponible hors dev.
 - Pages d'erreur : `templates/bundles/TwigBundle/Exception/error.html.twig` (ne jamais afficher le message d'exception).
 
 ## Ce que tu ne fais pas sans accord explicite
@@ -59,7 +62,7 @@ Référence complète : [`docs/bonnes-pratiques.md`](docs/bonnes-pratiques.md). 
 - Commit ou push Git : proposer le message, attendre la validation.
 - Supprimer des données : `docker compose down -v`, suppression de `var/data/`, migrations qui suppriment des colonnes ou tables.
 - Mise en production, configuration serveur, DNS, certificats.
-- Ajouter une authentification, stocker des données personnelles (RGPD) ou des moyens de paiement : signaler que ça nécessite la validation de la DSI.
+- Rendre une page accessible sans connexion, ajouter un autre mode d'authentification, stocker des données personnelles (RGPD) ou des moyens de paiement : signaler que ça nécessite la validation de la DSI.
 - Mettre un mot de passe, une clé d'API ou un secret dans un fichier versionné : utiliser `.env.local` (non versionné).
 
 ## Dépannage courant

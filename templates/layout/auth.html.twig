@@ -1,0 +1,139 @@
+{# Mise en page des écrans de connexion et de compte : une carte centrée, aux couleurs de la page d'accueil. #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        :root {
+            --bg: #f6f4ef;
+            --surface: #fffdf9;
+            --ink: #182a4a;
+            --muted: #5d6779;
+            --line: #e2ddd2;
+            --accent: #c9822b;
+            --accent-soft: #f7e9d6;
+            --ok: #2f7d55;
+            --ko: #b4432f;
+            --ko-soft: #f8e4df;
+            --focus: #c9822b;
+            --avatar-bg: #182a4a;
+            --avatar-ink: #f4b860;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1726;
+                --surface: #162136;
+                --ink: #eef0f4;
+                --muted: #9aa5b8;
+                --line: #263450;
+                --accent: #f4b860;
+                --accent-soft: #22304b;
+                --ok: #5cc28d;
+                --ko: #ef7d68;
+                --ko-soft: #3a2228;
+                --focus: #f4b860;
+                --avatar-bg: #263450;
+                --avatar-ink: #f4b860;
+            }
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: var(--bg);
+            color: var(--ink);
+            font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+        .auth { width: 100%; max-width: 440px; padding: 32px 16px; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 2px rgb(24 42 74 / 4%), 0 12px 32px -12px rgb(24 42 74 / 12%);
+        }
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--accent); font-size: .74rem; font-weight: 600;
+            letter-spacing: .12em; text-transform: uppercase;
+        }
+        .eyebrow::before { content: ""; width: 20px; height: 2px; background: currentColor; }
+        h1 { margin: 10px 0 6px; font-size: 1.75rem; line-height: 1.2; letter-spacing: -.02em; }
+        .lead { margin: 0 0 24px; color: var(--muted); }
+        .footnote { margin: 20px 0 0; color: var(--muted); font-size: .86rem; text-align: center; }
+
+        .notice {
+            margin: 0 0 20px; padding: 12px 14px;
+            background: var(--accent-soft); border-radius: 10px;
+            font-size: .92rem;
+        }
+        .notice code { font-weight: 600; }
+        .alert {
+            margin: 0 0 20px; padding: 12px 14px;
+            background: var(--ko-soft); color: var(--ko);
+            border-left: 3px solid var(--ko); border-radius: 8px;
+            font-size: .92rem; font-weight: 500;
+        }
+
+        .field { display: grid; gap: 6px; margin-bottom: 16px; font-weight: 600; font-size: .92rem; }
+        .field input {
+            width: 100%; padding: 11px 13px;
+            font: 400 1rem/1.4 inherit; color: var(--ink);
+            background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+        }
+        .field input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: transparent; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 12px 18px;
+            font: 600 1rem/1.2 inherit; text-decoration: none; cursor: pointer;
+            border-radius: 999px; border: 1px solid transparent;
+        }
+        .btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+        .btn-primary { background: var(--ink); color: var(--bg); }
+        .btn-primary:hover { opacity: .9; }
+        .btn-secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+        .btn-secondary:hover { border-color: var(--muted); }
+
+        .identity { display: flex; align-items: center; gap: 16px; margin: 14px 0 24px; }
+        .avatar {
+            flex: none; width: 56px; height: 56px; border-radius: 50%;
+            display: grid; place-items: center;
+            background: var(--avatar-bg); color: var(--avatar-ink);
+            font-weight: 700; font-size: 1.2rem; letter-spacing: .02em;
+        }
+        .identity h1 { margin: 0; font-size: 1.4rem; }
+        .identity p { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+
+        .details { margin: 0 0 24px; padding: 0; border-top: 1px solid var(--line); }
+        .details div {
+            display: flex; justify-content: space-between; gap: 16px;
+            padding: 12px 0; border-bottom: 1px solid var(--line); font-size: .94rem;
+        }
+        .details dt { color: var(--muted); }
+        .details dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+
+        .status-icon {
+            width: 44px; height: 44px; border-radius: 50%; margin-bottom: 14px;
+            display: grid; place-items: center;
+            background: var(--ko-soft); color: var(--ko); font-weight: 700; font-size: 1.3rem;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 24px 20px; }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="auth">
+        <div class="card">
+            {% block card %}{% endblock %}
+        </div>
+        {% block footnote %}{% endblock %}
+    </main>
+{% endblock %}
