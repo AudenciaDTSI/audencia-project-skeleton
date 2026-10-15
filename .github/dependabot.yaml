@@ -17,6 +17,10 @@ updates:
       prefix: "chore"
     cooldown:
       default-days: 7
+    ignore:
+      # Rester sur Symfony 7.4 LTS : pas de montée vers Symfony 8+
+      - dependency-name: "symfony/*"
+        versions: [">=8.0"]
 
   - package-ecosystem: github-actions
     directory: /
