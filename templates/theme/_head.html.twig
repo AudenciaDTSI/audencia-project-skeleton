@@ -1,0 +1,31 @@
+{#
+    Mode clair / sombre : à inclure dans le <head>, avec theme/_toggle.html.twig dans le <body>.
+    Les couleurs de la page utilisent light-dark() ; ce script applique tout de suite le choix mémorisé
+    (sinon celui du système) pour éviter un flash de la mauvaise couleur au chargement.
+#}
+<script>
+    try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') {
+            document.documentElement.dataset.theme = theme;
+        }
+    } catch {}
+</script>
+<style>
+    :root { color-scheme: light dark; }
+    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="dark"] { color-scheme: dark; }
+    .theme-toggle {
+        position: fixed; top: 16px; right: 16px; z-index: 10;
+        width: 40px; height: 40px; border-radius: 50%;
+        display: grid; place-items: center;
+        background: var(--surface); color: var(--ink);
+        border: 1px solid var(--line); cursor: pointer;
+    }
+    .theme-toggle:hover { border-color: var(--muted); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 20px; height: 20px; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle[aria-pressed="true"] .icon-sun { display: block; }
+    .theme-toggle[aria-pressed="true"] .icon-moon { display: none; }
+</style>

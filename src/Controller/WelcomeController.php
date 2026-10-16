@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\AzureSsoConfiguration;
 use App\Security\DevLoginAuthenticator;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class WelcomeController extends AbstractController
 {
     #[Route('/', name: 'app_welcome', methods: ['GET'], env: ['dev', 'test'])]
-    public function __invoke(Connection $connection): Response
+    public function __invoke(Connection $connection, AzureSsoConfiguration $sso): Response
     {
         return $this->render('welcome/index.html.twig', [
             'symfony_version' => Kernel::VERSION,
@@ -30,6 +31,7 @@ final class WelcomeController extends AbstractController
             'php_version' => \PHP_VERSION,
             'worker_mode' => isset($_SERVER['FRANKENPHP_WORKER']),
             'database' => $this->databaseStatus($connection),
+            'sso_configured' => $sso->isConfigured(),
             'dev_username' => DevLoginAuthenticator::USERNAME,
             'dev_password' => DevLoginAuthenticator::PASSWORD,
         ]);

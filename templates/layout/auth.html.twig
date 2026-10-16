@@ -3,37 +3,21 @@
 
 {% block stylesheets %}
     <style>
+        /* light-dark(clair, sombre) : bascule via theme/_head.html.twig */
         :root {
-            --bg: #f6f4ef;
-            --surface: #fffdf9;
-            --ink: #182a4a;
-            --muted: #5d6779;
-            --line: #e2ddd2;
-            --accent: #c9822b;
-            --accent-soft: #f7e9d6;
-            --ok: #2f7d55;
-            --ko: #b4432f;
-            --ko-soft: #f8e4df;
-            --focus: #c9822b;
-            --avatar-bg: #182a4a;
+            --bg: light-dark(#f6f4ef, #0f1726);
+            --surface: light-dark(#fffdf9, #162136);
+            --ink: light-dark(#182a4a, #eef0f4);
+            --muted: light-dark(#5d6779, #9aa5b8);
+            --line: light-dark(#e2ddd2, #263450);
+            --accent: light-dark(#c9822b, #f4b860);
+            --accent-soft: light-dark(#f7e9d6, #22304b);
+            --ok: light-dark(#2f7d55, #5cc28d);
+            --ko: light-dark(#b4432f, #ef7d68);
+            --ko-soft: light-dark(#f8e4df, #3a2228);
+            --focus: light-dark(#c9822b, #f4b860);
+            --avatar-bg: light-dark(#182a4a, #263450);
             --avatar-ink: #f4b860;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0f1726;
-                --surface: #162136;
-                --ink: #eef0f4;
-                --muted: #9aa5b8;
-                --line: #263450;
-                --accent: #f4b860;
-                --accent-soft: #22304b;
-                --ok: #5cc28d;
-                --ko: #ef7d68;
-                --ko-soft: #3a2228;
-                --focus: #f4b860;
-                --avatar-bg: #263450;
-                --avatar-ink: #f4b860;
-            }
         }
         *, *::before, *::after { box-sizing: border-box; }
         body {
